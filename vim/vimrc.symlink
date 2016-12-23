@@ -15,19 +15,30 @@ call vundle#rc()
   " General
   Bundle 'altercation/vim-colors-solarized'
   Bundle 'spf13/vim-colors'
-  Bundle 'ctrlpvim/ctrlp.vim'
+  Bundle 'kien/ctrlp.vim'
   Bundle 'Raimondi/delimitMate'
   Bundle 'Lokaltog/powerline'
   Bundle 'flazz/vim-colorschemes'
+  Bundle 'moll/vim-bbye'
 
   " General Programming
   Bundle "pangloss/vim-javascript"
+  Bundle 'mxw/vim-jsx'
+  Bundle 'scrooloose/syntastic'
   Bundle 'scrooloose/nerdtree'
   Bundle 'tpope/vim-fugitive'
-
+  Bundle 'fatih/vim-go'
+  Bundle 'terryma/vim-multiple-cursors'
+  Bundle 'scrooloose/nerdcommenter'
+  Plugin 'leafgarland/typescript-vim'
+  Plugin 'quramy/tsuquyomi'
+  Plugin 'shougo/vimproc.vim'
+  Plugin 'ervandew/supertab'
+  Plugin 'jistr/vim-nerdtree-tabs'
+  Plugin 'vim-airline/vim-airline'
 " General
 
-  set background=dark         " Assume a dark background
+  set background=light        " Assume a light background
   filetype plugin indent on   " Automatically detect file types.
   syntax on                   " Syntax highlighting
   set mouse=a                 " Automatically enable mouse usage
@@ -36,7 +47,8 @@ call vundle#rc()
   set nowritebackup
   set noswapfile
   scriptencoding utf-8
-  autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif " Always switch to the current file directory 
+  " this would make any ! scripts run in the directory of the buffer
+  "autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif " Always switch to the current file directory 
 
   set shortmess+=filmnrxoOtT          " Abbrev. of messages (avoids 'hit enter')
   set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
@@ -45,6 +57,75 @@ call vundle#rc()
   set spell                           " Spell checking on
   set hidden                          " Allow buffer switching without saving
 
+  "Override eslint with local version where necessary.
+  let local_eslint = finddir('node_modules', '.;') . '/.bin/eslint'
+  if matchstr(local_eslint, "^\/\\w") == ''
+    let local_eslint = getcwd() . "/" . local_eslint
+  endif
+  if executable(local_eslint)
+    let g:syntastic_javascript_eslint_exec = local_eslint
+  endif
+
+  set statusline+=%#warningmsg#
+  set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%*
+
+  let g:syntastic_javascript_checkers = ['eslint']
+  let g:jsx_ext_required = 0 " Allow JSX in normal JS files"
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_auto_loc_list = 1
+  let g:syntastic_check_on_open = 0
+  let g:syntastic_check_on_wq = 0
+  let g:syntastic_go_checkers = ['go']
+  let g:airline#extensions#tabline#enabled = 1
+  let g:syntastic_python_python_exec = '/usr/local/bin/python3'
+
+" }
+
+" Mappings {
+  
+  let mapleader = "\<space>"
+  map! jj <ESC>
+  
+  map <leader>m :NERDTreeToggle<CR>
+  " jump back to nerdtree
+  map <leader>n :NERDTree<CR>
+  " reveal in side bar
+  map <leader>t :NERDTreeFind<CR>
+  let NERDTreeShowHidden=1
+  
+  noremap <leader>a :w<CR>
+
+  " global find template
+  map <leader>f <C-p>
+  map <leader>F :grep -R BrandList `find packages/ -type f -name "*.js"`
+
+  map <leader>v <C-w>v
+  map <leader>b <C-w>s
+
+  " move between panes
+  map <leader>h <C-w>h
+  map <leader>j <C-w>j
+  map <leader>k <C-w>k
+  map <leader>l <C-w>l
+  
+  " buffers
+  nmap <leader>r :checktime<CR>
+  map <leader>c :Bdelete<CR>
+  map <leader>s :bprevious<CR>
+  map <leader>d :bnext<CR>
+
+  " Copy Pasta
+  map <leader>y :w !pbcopy<CR><CR>
+
+" }
+
+" Multiple Cursors {
+  let g:multi_cursor_next_key='<C-n>'
+  let g:multi_cursor_prev_key='<C-p>'
+  let g:multi_cursor_skip_key='<C-x>'
+  let g:multi_cursor_quit_key='<Esc>'
+  
 " }
 
 " Vim UI {
@@ -52,6 +133,7 @@ call vundle#rc()
   if filereadable(expand("~/.vim/bundle/vim-colors-solarized/colors/solarized.vim"))
     let g:solarized_termcolors=256
     color solarized                 " Load a colorscheme
+    set background=dark
   endif
 
   let g:solarized_termtrans=1
@@ -103,7 +185,8 @@ call vundle#rc()
   set scrolljump=5                " Lines to scroll when cursor leaves screen
   set scrolloff=3                 " Minimum lines to keep above and below cursor
   set foldenable                  " Auto fold code
-  set list
+  " dont highlight tabs in golang files
+  set nolist
 
   " List chars
   set listchars=""          " Reset the listchars
@@ -169,31 +252,5 @@ set noerrorbells
 set novisualbell
 set t_vb=
 set tm=500
-
-" Nerdtree map
-map <C-n> :NERDTreeToggle<CR>
-
-" CtrlP
-
-" Search from current directory instead of project root
-let g:ctrlp_working_path_mode = 0
-" Set no max file limit
-let g:ctrlp_max_files = 0
-let g:ctrlp_custom_ignore = {'file': '\.css$', 'dir': '\.git$\|node_modules$'}
-
-" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  unlet g:ctrlp_user_command 
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-endif
-
-
 
 
