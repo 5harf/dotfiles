@@ -36,6 +36,9 @@ call vundle#rc()
   Plugin 'ervandew/supertab'
   Plugin 'jistr/vim-nerdtree-tabs'
   Plugin 'vim-airline/vim-airline'
+  Plugin 'vim-airline/vim-airline-themes'
+  Plugin 'nathanaelkane/vim-indent-guides'
+
 " General
 
   set background=light        " Assume a light background
