@@ -20,6 +20,7 @@ call vundle#rc()
   Bundle 'Lokaltog/powerline'
   Bundle 'flazz/vim-colorschemes'
   Bundle 'moll/vim-bbye'
+  Plugin 'nanotech/jellybeans.vim'
 
   " General Programming
   Bundle "pangloss/vim-javascript"
@@ -135,7 +136,7 @@ call vundle#rc()
 
   if filereadable(expand("~/.vim/bundle/vim-colors-solarized/colors/solarized.vim"))
     let g:solarized_termcolors=256
-    color solarized                 " Load a colorscheme
+    color jellybeans                 " Load a colorscheme
     set background=dark
   endif
 
