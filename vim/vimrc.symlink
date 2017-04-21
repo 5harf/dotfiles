@@ -52,7 +52,7 @@ call vundle#rc()
   set noswapfile
   scriptencoding utf-8
   " this would make any ! scripts run in the directory of the buffer
-  "autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif " Always switch to the current file directory 
+  "autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif " Always switch to the current file directory
 
   set shortmess+=filmnrxoOtT          " Abbrev. of messages (avoids 'hit enter')
   set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
@@ -87,22 +87,22 @@ call vundle#rc()
 " }
 
 " Mappings {
-  
+
   let mapleader = "\<space>"
   map! jj <ESC>
-  
+
   map <leader>m :NERDTreeToggle<CR>
   " jump back to nerdtree
   map <leader>n :NERDTree<CR>
   " reveal in side bar
   map <leader>t :NERDTreeFind<CR>
-  let NERDTreeShowHidden=1
-  
+  let g:nerdtree_tabs_open_on_gui_startup=0
+
   noremap <leader>a :w<CR>
 
   " global find template
   map <leader>f <C-p>
-  map <leader>F :grep -R BrandList `find packages/ -type f -name "*.js"`
+  map <leader>F :grep -R InboxElectron `find InboxElectron/ -type f -name "*.ts"`
 
   map <leader>v <C-w>v
   map <leader>b <C-w>s
@@ -112,9 +112,9 @@ call vundle#rc()
   map <leader>j <C-w>j
   map <leader>k <C-w>k
   map <leader>l <C-w>l
-  
+
   " buffers
-  nmap <leader>r :checktime<CR>
+  nmap <leader>rc :checktime<CR>
   map <leader>c :Bdelete<CR>
   map <leader>s :bprevious<CR>
   map <leader>d :bnext<CR>
@@ -122,6 +122,11 @@ call vundle#rc()
   " Copy Pasta
   map <leader>y :w !pbcopy<CR><CR>
 
+  " Typescript
+  let g:tsuquyomi_disable_defaultMappings = 1
+  autocmd FileType typescript nnoremap <leader>e :TsuDefinition<CR>
+  autocmd FileType typescript nnoremap <leader>w :TsuReferences<CR>
+  autocmd FileType typescript nnoremap <Leader>rr :TsuRenameSymbol<CR>
 " }
 
 " Multiple Cursors {
@@ -129,7 +134,7 @@ call vundle#rc()
   let g:multi_cursor_prev_key='<C-p>'
   let g:multi_cursor_skip_key='<C-x>'
   let g:multi_cursor_quit_key='<Esc>'
-  
+
 " }
 
 " Vim UI {
@@ -144,7 +149,7 @@ call vundle#rc()
   let g:solarized_contrast="high"
   let g:solarized_visibility="high"
 
-  "let g:hybrid_use_iTerm_colors = 1
+  "c+let g:hybrid_use_iTerm_colors = 1
   "colorscheme monokai
 
   set tabpagemax=15               " Only show 15 tabs
@@ -211,12 +216,12 @@ call vundle#rc()
   set nowrap                      " Wrap long lines
   set autoindent                  " Indent at the same level of the previous line
   set expandtab                   " Tabs are spaces, not tabs
-  
+
   " 1 tab == 4 spaces
   set shiftwidth=4
   set tabstop=4
   set softtabstop=4               " Let backspace delete indent
-  
+
   "set matchpairs+=<:>             " Match, to be used with %
   set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
 
@@ -257,4 +262,14 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" lock in font size and type
+
+set guifont=Menlo\ Regular:h14
+
+" unselected buffers are basically closed, and auto reload changes
+set bufhidden=delete
+set autoread
+
+"clear trailing spaces on save
+autocmd BufWritePre *.* :%s/\s\+$//e
 
