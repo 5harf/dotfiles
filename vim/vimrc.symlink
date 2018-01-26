@@ -39,6 +39,8 @@ call vundle#rc()
   Plugin 'vim-airline/vim-airline'
   Plugin 'vim-airline/vim-airline-themes'
   Plugin 'nathanaelkane/vim-indent-guides'
+  Plugin 'tpope/vim-surround'
+  Plugin 'mitermayer/vim-prettier'
 
 " General
 
@@ -127,6 +129,7 @@ call vundle#rc()
   autocmd FileType typescript nnoremap <leader>e :TsuDefinition<CR>
   autocmd FileType typescript nnoremap <leader>w :TsuReferences<CR>
   autocmd FileType typescript nnoremap <Leader>rr :TsuRenameSymbol<CR>
+  map <leader>o :<C-u>echo tsuquyomi#hint()<CR>
 " }
 
 " Multiple Cursors {
@@ -144,6 +147,8 @@ call vundle#rc()
     color jellybeans                 " Load a colorscheme
     set background=dark
   endif
+
+  color jellybeans
 
   let g:solarized_termtrans=1
   let g:solarized_contrast="high"
@@ -273,3 +278,15 @@ set autoread
 "clear trailing spaces on save
 autocmd BufWritePre *.* :%s/\s\+$//e
 
+let g:tsuquyomi_use_local_typescript = 0
+let g:tsuquyomi_use_dev_node_module = 0
+
+" Prettier config
+let g:prettier#config#print_width = 120
+let g:prettier#config#tab_width = 4
+let g:prettier#config#single_quote = 'false'
+let g:prettier#config#bracket_spacing = 'true'
+let g:prettier#config#jsx_bracket_same_line = 'false'
+let g:prettier#config#trailing_comma = 'none'
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.ts,*.css,*.scss,*.less,*.json Prettier
